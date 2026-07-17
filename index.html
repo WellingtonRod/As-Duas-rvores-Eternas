@@ -197,32 +197,6 @@ body{
 .photo-frame img{width:100%;height:100%;object-fit:cover;}
 .photo-frame .placeholder{color:#8a744c;font-size:.68rem;text-align:center;font-family:'Cinzel',serif;}
 .photo-actions{display:flex;flex-direction:column;gap:8px;}
-
-/* modal de recorte da foto */
-#cropModal{
-  position:fixed;inset:0;z-index:1100;
-  background:rgba(10,8,6,.85);
-  display:none;align-items:center;justify-content:center;padding:20px;
-}
-#cropModal.show{display:flex;}
-.crop-card{
-  background:linear-gradient(180deg, var(--parchment) 0%, var(--parchment-dark) 100%);
-  border:1px solid var(--line);
-  padding:26px 24px;max-width:360px;width:100%;text-align:center;
-  box-shadow:0 12px 40px rgba(0,0,0,.6);
-}
-.crop-card h3{font-family:'Cinzel Decorative',serif;color:var(--blood);margin:0 0 4px;font-size:1.1rem;}
-.crop-card .crop-sub{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:1px;text-transform:uppercase;color:#6b5834;margin-bottom:16px;}
-#cropStage{
-  width:250px;height:250px;margin:0 auto 16px;position:relative;overflow:hidden;
-  border-radius:50%;border:3px solid var(--gold);background:#0c0906;cursor:grab;
-  touch-action:none;
-}
-#cropStage.dragging{cursor:grabbing;}
-#cropStage img{position:absolute;top:0;left:0;transform-origin:0 0;user-select:none;pointer-events:none;}
-.crop-controls{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:16px;}
-.crop-controls label{margin:0;font-size:.68rem;}
-.crop-controls input[type=range]{width:150px;margin:0;}
 .equip-slot{
   position:relative;
   background:linear-gradient(180deg,#1a2028,#10141a);
@@ -431,7 +405,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blood);b
 .map-toolbar input[type=file]{color:var(--ink);font-size:.85rem;}
 .map-toolbar input[type=color]{width:36px;height:32px;border:none;padding:0;background:none;}
 .map-toolbar input[type=text]{width:110px;margin:0;}
-.map-toolbar select{width:auto;margin:0;display:inline-block;padding:6px 8px;}
 .map-toolbar label{display:inline;margin:0;font-size:.8rem;}
 
 
@@ -495,9 +468,39 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blood);b
 }
 #mapViewport.dragging{cursor:grabbing;}
 #mapInner{position:absolute;top:0;left:0;transform-origin:0 0;width:2400px;height:2400px;}
-#mapImg{position:absolute;top:0;left:0;max-width:none;pointer-events:none;user-select:none;}
 #gridOverlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;}
 #terrainCanvas{position:absolute;top:0;left:0;pointer-events:none;}
+
+/* ---------- Animação de dado ao vivo sobre o mapa ---------- */
+#mapDiceOverlay{position:absolute;inset:0;pointer-events:none;z-index:60;overflow:visible;}
+.map-dice{
+  position:absolute;top:38%;transform:translate(-50%,-50%);
+  min-width:104px;padding:10px 14px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:linear-gradient(160deg,#241c14,#120d09);
+  border:3px solid var(--gold-bright);border-radius:14px;
+  box-shadow:0 0 30px rgba(220,184,119,.65), inset 0 0 20px rgba(0,0,0,.5);
+  animation:dadoAparece .35s ease-out;
+}
+.map-dice .num{
+  font-family:'Cinzel Decorative',serif;font-weight:900;font-size:2.2rem;
+  color:var(--gold-bright);line-height:1;text-shadow:0 0 10px rgba(220,184,119,.5);
+  display:inline-block;
+}
+.map-dice .num.girando{animation:dadoGirando .9s ease-in-out;}
+.map-dice .tipo{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:1px;color:#8a744c;text-transform:uppercase;}
+.map-dice .quem{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:1px;color:#b8a578;text-transform:uppercase;font-weight:700;}
+.map-dice.saindo{animation:dadoSaindo .45s ease-in forwards;}
+@keyframes dadoAparece{from{opacity:0;transform:translate(-50%,-70%) scale(.5);}to{opacity:1;transform:translate(-50%,-50%) scale(1);}}
+@keyframes dadoSaindo{to{opacity:0;transform:translate(-50%,-50%) scale(.7);}}
+@keyframes dadoGirando{
+  0%{transform:rotate(0deg) scale(1);}
+  20%{transform:rotate(160deg) scale(1.18);}
+  40%{transform:rotate(300deg) scale(.92);}
+  60%{transform:rotate(480deg) scale(1.12);}
+  80%{transform:rotate(620deg) scale(.96);}
+  100%{transform:rotate(720deg) scale(1);}
+}
 .token{
   position:absolute;width:44px;height:44px;border-radius:50%;
   border:2px solid #1a130c;box-shadow:0 2px 6px rgba(0,0,0,.6);
@@ -506,33 +509,27 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blood);b
   cursor:grab;user-select:none;
 }
 .token:active{cursor:grabbing;}
-.token .rm{
-  position:absolute;top:-8px;right:-8px;width:16px;height:16px;border-radius:50%;
-  background:var(--blood);color:#fff;font-size:.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;
+.img-obj{
+  position:absolute;
+  border:2px solid var(--gold-bright);box-shadow:0 3px 10px rgba(0,0,0,.65);
+  background-size:100% 100%;background-repeat:no-repeat;background-position:center;
+  cursor:grab;user-select:none;
 }
-.token .resize-handle{
-  position:absolute;right:-5px;bottom:-5px;width:13px;height:13px;
-  background:var(--gold-bright);border:1px solid #1a130c;border-radius:2px;
-  cursor:nwse-resize;
+.img-obj:active{cursor:grabbing;}
+.token .rm, .img-obj .rm{
+  position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;
+  background:var(--blood);color:#fff;font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  border:2px solid #1a130c;box-shadow:0 2px 6px rgba(0,0,0,.7);
+  transform:scale(var(--counter-scale,1));transform-origin:center;
+  z-index:2;
 }
-
-.map-layer{
-  position:absolute;width:300px;height:300px;
-  border:1px dashed rgba(220,184,119,.55);
-  cursor:grab;box-sizing:border-box;
+.token .rz, .img-obj .rz{
+  position:absolute;bottom:-8px;right:-8px;width:22px;height:22px;border-radius:6px;
+  background:var(--gold-bright);color:#1a130c;font-size:.7rem;display:flex;align-items:center;justify-content:center;
+  cursor:nwse-resize;border:2px solid #1a130c;box-shadow:0 2px 6px rgba(0,0,0,.7);
+  transform:scale(var(--counter-scale,1));transform-origin:center;
+  z-index:2;
 }
-.map-layer:active{cursor:grabbing;}
-.map-layer img{width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none;display:block;}
-.map-layer .rm{
-  position:absolute;top:-9px;right:-9px;width:18px;height:18px;border-radius:50%;
-  background:var(--blood);color:#fff;font-size:.65rem;display:flex;align-items:center;justify-content:center;cursor:pointer;
-}
-.map-layer .resize-handle{
-  position:absolute;right:-6px;bottom:-6px;width:15px;height:15px;
-  background:var(--gold-bright);border:1px solid #1a130c;border-radius:2px;
-  cursor:nwse-resize;
-}
-
 .hint{font-size:.78rem;color:#3d2f18;opacity:.75;margin-top:6px;}
 
 .footer-note{text-align:center;color:#8a744c;font-size:.75rem;margin-top:26px;font-family:'Cinzel',serif;letter-spacing:1px;}
@@ -589,6 +586,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blood);b
   <div class="session-bar">
     <span id="sessionText">Modo local (sem login)</span>
     <button class="btn secondary" id="sessionBtn" onclick="onSessionBtnClick()">Entrar / Criar Conta</button>
+    <span id="mesaStatusInd" style="width:100%;text-align:center;font-size:.6rem;">🔄 Conectando à mesa...</span>
   </div>
 
   <div class="tabs">
@@ -949,8 +947,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blood);b
         </div>
         <div class="collapsible-body">
           <div class="map-toolbar">
-            <input type="file" id="mapFile" accept="image/*" onchange="carregarMapa(event)">
-            <button class="btn danger" onclick="removerMapa()">🗑 Remover Mapa</button>
             <button class="btn secondary" onclick="zoomMap(1.15)">Zoom +</button>
             <button class="btn secondary" onclick="zoomMap(0.87)">Zoom −</button>
             <button class="btn secondary" onclick="resetMapView()">Centralizar</button>
@@ -959,13 +955,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blood);b
             <input type="color" id="tokenCor" value="#6d2027">
             <button class="btn" onclick="adicionarToken()">+ Token</button>
             <button class="btn danger" onclick="limparTokens()">Limpar Tokens</button>
+            <input type="file" id="imgObjFile" accept="image/*" style="display:none" onchange="adicionarImagemLivre(event)">
+            <button class="btn" onclick="document.getElementById('imgObjFile').click()">🖼️ + Imagem</button>
+            <button class="btn danger" onclick="limparImagens()">Limpar Imagens</button>
           </div>
-          <div class="map-toolbar">
-            <input type="file" id="layerFile" accept="image/*" style="display:none" onchange="carregarCamadaImagem(event)">
-            <button class="btn secondary" onclick="document.getElementById('layerFile').click()">🖼️ Adicionar Imagem</button>
-            <button class="btn danger" onclick="limparCamadas()">Limpar Imagens</button>
-            <span class="hint" style="margin:0;">Arraste para posicionar, use a alça dourada para redimensionar, clique no × para remover.</span>
-          </div>
+          <div class="hint">Use "+ Imagem" pra colocar o mapa de fundo (uma imagem bem grande, arrastada pra trás) e qualquer outra imagem — todas com liberdade total de posição e tamanho.</div>
         </div>
       </div>
 
@@ -1013,7 +1007,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blood);b
 
       <div id="mapViewport">
         <div id="mapInner">
-          <img id="mapImg" src="" style="display:none">
           <canvas id="terrainCanvas"></canvas>
           <svg id="gridOverlay"><defs>
             <pattern id="gridPattern" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -1022,8 +1015,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blood);b
             <rect width="100%" height="100%" fill="url(#gridPattern)"/>
           </svg>
         </div>
+        <div id="mapDiceOverlay"></div>
       </div>
-      <div class="hint">Arraste o fundo para mover o mapa, use a roda do mouse ou os botões de zoom. Arraste os tokens para movê-los; clique no × para removê-los. Carregue uma imagem de mapa (jpg/png) para começar. Para pintar terreno: escolha um tipo, ligue o "Modo Pintura" e clique/arraste sobre a grade — use "Vazio" para apagar.</div>
+      <div class="hint">Arraste o fundo para mover o mapa, use a roda do mouse ou os botões de zoom. Arraste os tokens e imagens para movê-los; use a alça dourada (⤡) no canto pra redimensionar e o × vermelho pra remover. Use "+ Imagem" para colocar qualquer imagem sobre o mapa — inclusive o próprio fundo do cenário, com liberdade total de tamanho e posição. Para pintar terreno: escolha um tipo, ligue o "Modo Pintura" e clique/arraste sobre a grade — use "Vazio" para apagar.</div>
     </div>
 
     <div class="panel roster-panel"><div class="c1"></div><div class="c2"></div>
@@ -1036,26 +1030,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blood);b
   </div>
 
   <div class="footer-note">Que a luz da Árvore resista às sombras.</div>
-</div>
-
-<!-- ================= MODAL DE RECORTE DE FOTO ================= -->
-<div id="cropModal">
-  <div class="crop-card">
-    <h3>Ajustar Foto</h3>
-    <div class="crop-sub">Posicione o rosto dentro do círculo</div>
-    <div id="cropStage">
-      <img id="cropImg" draggable="false">
-    </div>
-    <div class="crop-controls">
-      <label>🔍 Zoom</label>
-      <input type="range" id="cropZoom" min="100" max="300" value="100">
-    </div>
-    <div class="btn-row" style="justify-content:center">
-      <button class="btn" onclick="confirmarCorte()">Aplicar</button>
-      <button class="btn secondary" onclick="cancelarCorte()">Cancelar</button>
-    </div>
-    <div class="hint" style="text-align:center;margin-top:8px;">Arraste a imagem para posicionar e use o zoom para aproximar o rosto.</div>
-  </div>
 </div>
 
 <script>
@@ -1303,12 +1277,14 @@ function atualizarTodasRaridades(){
 
 /* ---------- Foto do personagem ---------- */
 let personagemFoto = null;
-
 function carregarFoto(evt){
   const file = evt.target.files[0];
   if(!file) return;
   const reader = new FileReader();
-  reader.onload = e=> abrirCropper(e.target.result);
+  reader.onload = e=>{
+    personagemFoto = e.target.result;
+    aplicarFotoNaTela();
+  };
   reader.readAsDataURL(file);
 }
 function removerFoto(){
@@ -1328,108 +1304,6 @@ function aplicarFotoNaTela(){
   portraitImg.src = personagemFoto || '';
   portraitImg.style.display = temFoto ? 'block':'none';
   portraitPlaceholder.style.display = temFoto ? 'none':'block';
-}
-
-/* ---------- Recorte / zoom da foto antes de salvar ---------- */
-const CROP_STAGE_SIZE = 250;
-const CROP_OUTPUT_SIZE = 500;
-let cropState = { natW:0, natH:0, baseScale:1, scale:1, x:0, y:0 };
-let cropDragging = false, cropDragStart = {x:0,y:0}, cropOrigin = {x:0,y:0};
-
-function abrirCropper(dataUrl){
-  const img = document.getElementById('cropImg');
-  img.onload = ()=>{
-    cropState.natW = img.naturalWidth;
-    cropState.natH = img.naturalHeight;
-    cropState.baseScale = Math.max(CROP_STAGE_SIZE/cropState.natW, CROP_STAGE_SIZE/cropState.natH);
-    cropState.scale = cropState.baseScale;
-    cropState.x = (CROP_STAGE_SIZE - cropState.natW*cropState.scale)/2;
-    cropState.y = (CROP_STAGE_SIZE - cropState.natH*cropState.scale)/2;
-    document.getElementById('cropZoom').value = 100;
-    aplicarTransformCrop();
-    document.getElementById('cropModal').classList.add('show');
-  };
-  img.src = dataUrl;
-}
-
-function aplicarTransformCrop(){
-  const img = document.getElementById('cropImg');
-  img.style.width = cropState.natW+'px';
-  img.style.height = cropState.natH+'px';
-  img.style.transform = `translate(${cropState.x}px,${cropState.y}px) scale(${cropState.scale})`;
-}
-
-function clampCropPosition(){
-  const scaledW = cropState.natW*cropState.scale;
-  const scaledH = cropState.natH*cropState.scale;
-  const minX = Math.min(0, CROP_STAGE_SIZE - scaledW);
-  const minY = Math.min(0, CROP_STAGE_SIZE - scaledH);
-  cropState.x = Math.max(minX, Math.min(0, cropState.x));
-  cropState.y = Math.max(minY, Math.min(0, cropState.y));
-}
-
-function cancelarCorte(){
-  document.getElementById('cropModal').classList.remove('show');
-  document.getElementById('photoFile').value = '';
-}
-
-function confirmarCorte(){
-  const canvas = document.createElement('canvas');
-  canvas.width = CROP_OUTPUT_SIZE;
-  canvas.height = CROP_OUTPUT_SIZE;
-  const ctx = canvas.getContext('2d');
-  const img = document.getElementById('cropImg');
-  const srcX = -cropState.x / cropState.scale;
-  const srcY = -cropState.y / cropState.scale;
-  const srcSize = CROP_STAGE_SIZE / cropState.scale;
-  ctx.drawImage(img, srcX, srcY, srcSize, srcSize, 0, 0, CROP_OUTPUT_SIZE, CROP_OUTPUT_SIZE);
-  personagemFoto = canvas.toDataURL('image/jpeg', 0.92);
-  aplicarFotoNaTela();
-  document.getElementById('cropModal').classList.remove('show');
-}
-
-function initCropStage(){
-  const stage = document.getElementById('cropStage');
-  const zoomSlider = document.getElementById('cropZoom');
-
-  stage.addEventListener('pointerdown', e=>{
-    cropDragging = true;
-    stage.classList.add('dragging');
-    stage.setPointerCapture(e.pointerId);
-    cropDragStart = { x:e.clientX, y:e.clientY };
-    cropOrigin = { x:cropState.x, y:cropState.y };
-  });
-  stage.addEventListener('pointermove', e=>{
-    if(!cropDragging) return;
-    cropState.x = cropOrigin.x + (e.clientX - cropDragStart.x);
-    cropState.y = cropOrigin.y + (e.clientY - cropDragStart.y);
-    clampCropPosition();
-    aplicarTransformCrop();
-  });
-  const pararArraste = ()=>{ cropDragging=false; stage.classList.remove('dragging'); };
-  stage.addEventListener('pointerup', pararArraste);
-  stage.addEventListener('pointerleave', pararArraste);
-
-  stage.addEventListener('wheel', e=>{
-    e.preventDefault();
-    const novoValor = Math.max(100, Math.min(300, parseFloat(zoomSlider.value) + (e.deltaY<0?10:-10)));
-    zoomSlider.value = novoValor;
-    zoomSlider.dispatchEvent(new Event('input'));
-  }, {passive:false});
-
-  zoomSlider.addEventListener('input', ()=>{
-    const centerX = CROP_STAGE_SIZE/2, centerY = CROP_STAGE_SIZE/2;
-    const oldScale = cropState.scale;
-    const novaScale = cropState.baseScale * (parseFloat(zoomSlider.value)/100);
-    // mantém o ponto central da tela fixo ao aplicar o novo zoom
-    const relX = (centerX - cropState.x)/oldScale;
-    const relY = (centerY - cropState.y)/oldScale;
-    cropState.scale = novaScale;
-    cropState.x = centerX - relX*novaScale;
-    cropState.y = centerY - relY*novaScale;
-    clampCropPosition();
-    aplicarTransformCrop();
-  });
 }
 
 /* ---------- Mesa Compartilhada (Supabase) ---------- */
@@ -1454,7 +1328,7 @@ function conectarSupabase(){
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     verificarSessaoExistente();
     carregarCenariosDaMesa();
-    carregarPersonagensDaMesa();
+    conectarCanalMesa();
   }catch(err){
     console.error('Erro ao conectar ao Supabase: '+err.message);
   }
@@ -1462,6 +1336,80 @@ function conectarSupabase(){
 
 function getMesaCodigo(){
   return MESA_CODIGO;
+}
+
+/* ============================================================
+   CANAL AO VIVO DA MESA (Realtime) — dados e mapa
+   ============================================================ */
+let mesaChannel = null;
+let nomeJogadorLocal = 'Convidado';
+
+function nomeJogador(){
+  return (usuarioLogado && usuarioLogado.usuario) ? usuarioLogado.usuario : nomeJogadorLocal;
+}
+
+let mesaConectada = false;
+let tentativasReconexao = 0;
+
+function conectarCanalMesa(){
+  if(!supabaseClient) return;
+  if(mesaChannel){ supabaseClient.removeChannel(mesaChannel); }
+  mesaChannel = supabaseClient.channel('mesa-'+getMesaCodigo(), { config: { broadcast: { self: true } } });
+
+  mesaChannel
+    .on('broadcast', {event:'dado'}, ({payload}) => receberDado(payload))
+    .on('broadcast', {event:'token_add'}, ({payload}) => receberTokenAdd(payload))
+    .on('broadcast', {event:'token_move'}, ({payload}) => receberTokenMove(payload))
+    .on('broadcast', {event:'token_remove'}, ({payload}) => receberTokenRemove(payload))
+    .on('broadcast', {event:'token_resize'}, ({payload}) => receberTokenResize(payload))
+    .on('broadcast', {event:'imagem_add'}, ({payload}) => receberImagemAdd(payload))
+    .on('broadcast', {event:'imagem_move'}, ({payload}) => receberImagemMove(payload))
+    .on('broadcast', {event:'imagem_resize'}, ({payload}) => receberImagemResize(payload))
+    .on('broadcast', {event:'imagem_remove'}, ({payload}) => receberImagemRemove(payload))
+    .on('broadcast', {event:'imagens_clear'}, () => receberImagensClear())
+    .on('broadcast', {event:'tokens_clear'}, () => receberTokensClear())
+    .on('broadcast', {event:'terreno_pintar'}, ({payload}) => receberTerrenoPintar(payload))
+    .on('broadcast', {event:'terreno_limpar'}, () => receberTerrenoLimpar())
+    .on('broadcast', {event:'grid_toggle'}, ({payload}) => receberGridToggle(payload))
+    .on('broadcast', {event:'cenario_aplicado'}, ({payload}) => receberCenarioAplicado(payload))
+    .subscribe((status)=>{
+      console.log('[mesa] status do canal em tempo real:', status);
+      if(status === 'SUBSCRIBED'){
+        mesaConectada = true;
+        tentativasReconexao = 0;
+        atualizarIndicadorMesa();
+      } else if(status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED'){
+        mesaConectada = false;
+        atualizarIndicadorMesa();
+        // tenta reconectar sozinho, com um pequeno intervalo crescente
+        tentativasReconexao++;
+        const espera = Math.min(1000 * tentativasReconexao, 8000);
+        setTimeout(()=>{ if(!mesaConectada) conectarCanalMesa(); }, espera);
+      }
+    });
+}
+
+function atualizarIndicadorMesa(){
+  const el = document.getElementById('mesaStatusInd');
+  if(!el) return;
+  if(mesaConectada){
+    el.textContent = '🟢 Mesa ao vivo conectada';
+    el.title = 'Dados, tokens e imagens sincronizam em tempo real com todos os conectados.';
+  } else {
+    el.textContent = '🔴 Mesa desconectada — reconectando...';
+    el.title = 'Sem conexão em tempo real no momento. Rolagens e mudanças no mapa não estão sincronizando com os outros agora.';
+  }
+}
+
+function enviarMesa(evento, payload){
+  if(!mesaChannel){
+    console.warn('[mesa] tentou enviar "'+evento+'" mas o canal ainda não existe.');
+    return;
+  }
+  if(!mesaConectada){
+    console.warn('[mesa] enviando "'+evento+'" mesmo sem confirmação de conexão (pode não chegar a todos).');
+  }
+  mesaChannel.send({ type:'broadcast', event: evento, payload: payload || {} });
 }
 
 /* ---------- Autenticação (login por conta) ---------- */
@@ -1476,6 +1424,8 @@ function mostrarGate(){
   document.getElementById('authGate').classList.remove('hidden');
 }
 function entrarModoLocal(){
+  const nome = prompt('Digite um nome para aparecer nas rolagens de dados e na mesa (opcional):', '');
+  if(nome && nome.trim()) nomeJogadorLocal = nome.trim();
   mostrarApp();
   atualizarBarraSessao();
 }
@@ -1597,11 +1547,8 @@ async function publicarPersonagem(){
     alert('Erro ao publicar personagem: '+error.message);
   } else {
     alert('Personagem "'+nome+'" publicado na mesa "'+mesa+'".');
-    carregarPersonagensDaMesa();
   }
 }
-
-let ultimoRoster = [];
 
 async function carregarPersonagensDaMesa(){
   if(!supabaseClient){
@@ -1620,37 +1567,27 @@ async function carregarPersonagensDaMesa(){
     return;
   }
   if(!data || data.length===0){
-    ultimoRoster = [];
     lista.innerHTML = '<div class="hint">Nenhum personagem publicado nesta mesa ainda.</div>';
     return;
   }
-  ultimoRoster = data;
   lista.innerHTML = data.map(p=>{
     const thumb = p.foto ? `<img src="${p.foto}">` : `<span>${(p.nome||'?').slice(0,1).toUpperCase()}</span>`;
     return `<div class="roster-card">
       <div class="thumb">${thumb}</div>
       <div class="rname">${p.nome||'Sem nome'}</div>
-      <button onclick="adicionarTokenDoRoster('${p.id}')">+</button>
+      <button onclick='adicionarTokenDeDados(${JSON.stringify({nome:p.nome,foto:p.foto}).replace(/'/g,"&#39;")})'>+</button>
     </div>`;
   }).join('');
 }
 
-function adicionarTokenDoRoster(id){
-  const item = ultimoRoster.find(p=>String(p.id)===String(id));
-  if(!item){ alert('Personagem não encontrado na lista. Clique em 🔄 Atualizar e tente de novo.'); return; }
-  adicionarTokenDeDados({ nome:item.nome, foto:item.foto });
-}
-
 function adicionarTokenDeDados(item){
   tokenSeq++;
-  criarTokenNoMapa({
-    left: (200+tokenSeq*20)+'px',
-    top: (200+tokenSeq*20)+'px',
-    nome: item.nome || '',
-    cor: '#5a4a34',
-    foto: item.foto || null,
-    tamanho: 44
-  });
+  const left = (200+tokenSeq*20)+'px';
+  const top = (200+tokenSeq*20)+'px';
+  const tid = gerarId();
+  const payload = {tid, left, top, nome: item.nome || '', foto: item.foto || null};
+  criarTokenNoMapa(payload);
+  enviarMesa('token_add', payload);
 }
 
 function coletarFicha(){
@@ -1720,9 +1657,6 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab === 'mapa' && supabaseClient){
-      carregarPersonagensDaMesa();
-    }
   });
 });
 
@@ -1760,6 +1694,7 @@ function rolarDados(){
   const advMode = document.querySelector('input[name=adv]:checked').value;
   let rolls = [];
   let total = 0;
+  let label, detail;
 
   if(diceSelected===20 && qtd===1 && advMode!=='normal'){
     const r1 = Math.floor(Math.random()*20)+1;
@@ -1767,26 +1702,59 @@ function rolarDados(){
     const escolhido = advMode==='vantagem'? Math.max(r1,r2) : Math.min(r1,r2);
     rolls = [r1,r2];
     total = escolhido + modv;
-    document.getElementById('rollResult').innerHTML = `${total} <div class="detail">d20: [${r1}, ${r2}] → ${escolhido} (${advMode}) ${modv?(modv>0?'+':'')+modv:''}</div>`;
-    pushHistory(`1d20 ${advMode} ${modv?((modv>0?'+':'')+modv):''}`, total, `[${r1},${r2}]→${escolhido}`);
+    label = `1d20 ${advMode} ${modv?((modv>0?'+':'')+modv):''}`;
+    detail = `[${r1},${r2}]→${escolhido}`;
   } else {
     for(let i=0;i<qtd;i++){
       const r = Math.floor(Math.random()*diceSelected)+1;
       rolls.push(r); total += r;
     }
     total += modv;
-    document.getElementById('rollResult').innerHTML = `${total} <div class="detail">${qtd}d${diceSelected}: [${rolls.join(', ')}] ${modv?(modv>0?'+':'')+modv:''}</div>`;
-    pushHistory(`${qtd}d${diceSelected}${modv?((modv>0?'+':'')+modv):''}`, total, `[${rolls.join(',')}]`);
+    label = `${qtd}d${diceSelected}${modv?((modv>0?'+':'')+modv):''}`;
+    detail = `[${rolls.join(',')}]`;
+  }
+
+  // Envia a rolagem para todos os conectados na mesa (inclusive quem rolou,
+  // graças à opção broadcast self:true) — assim todo mundo vê ao mesmo tempo.
+  if(mesaChannel){
+    enviarMesa('dado', { usuario: nomeJogador(), label, total, detail });
+  } else {
+    // sem conexão em tempo real: aplica só localmente
+    receberDado({ usuario: nomeJogador(), label, total, detail });
   }
 }
-function pushHistory(label, total, detail){
-  history.unshift({label,total,detail,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});
+function receberDado(payload){
+  const { usuario, label, total, detail } = payload;
+  document.getElementById('rollResult').innerHTML = `${total} <div class="detail">${label}: ${detail}</div>`;
+  pushHistory(usuario, label, total, detail);
+  mostrarDadoNoMapa(payload);
+}
+function mostrarDadoNoMapa(payload){
+  const overlay = document.getElementById('mapDiceOverlay');
+  if(!overlay) return;
+  const { usuario, label, total } = payload;
+  const el = document.createElement('div');
+  el.className = 'map-dice';
+  const offsetX = Math.round(Math.random()*160-80);
+  el.style.left = `calc(50% + ${offsetX}px)`;
+  el.innerHTML = `<span class="num girando">🎲</span><span class="tipo">${label}</span><span class="quem">${usuario||'Convidado'}</span>`;
+  overlay.appendChild(el);
+  const numEl = el.querySelector('.num');
+  setTimeout(()=>{
+    numEl.classList.remove('girando');
+    numEl.textContent = total;
+  }, 750);
+  setTimeout(()=>{ el.classList.add('saindo'); }, 2500);
+  setTimeout(()=>{ el.remove(); }, 2950);
+}
+function pushHistory(quem, label, total, detail){
+  history.unshift({quem,label,total,detail,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});
   if(history.length>40) history.pop();
   renderHistory();
 }
 function renderHistory(){
   document.getElementById('diceHistory').innerHTML = history.map(h=>
-    `<div class="entry"><span>${h.time} · ${h.label} <small style="opacity:.6">${h.detail}</small></span><span class="r">${h.total}</span></div>`
+    `<div class="entry"><span>${h.time} · <b>${h.quem||'Convidado'}</b> · ${h.label} <small style="opacity:.6">${h.detail}</small></span><span class="r">${h.total}</span></div>`
   ).join('');
 }
 function limparHistorico(){ history=[]; renderHistory(); }
@@ -1870,151 +1838,41 @@ function pintarNaPosicao(clientX, clientY){
   const gy = Math.floor(localY / GRID_SIZE);
   const brush = parseInt(document.getElementById('brushSize').value) || 1;
   const offset = Math.floor(brush/2);
+  const alterados = [];
   for(let dx=0; dx<brush; dx++){
     for(let dy=0; dy<brush; dy++){
       const key = (gx-offset+dx)+','+(gy-offset+dy);
       if(terrainSelected==='vazio') tileData.delete(key);
       else tileData.set(key, terrainSelected);
+      alterados.push([key, terrainSelected]);
     }
   }
   redrawTerrain();
+  enviarMesa('terreno_pintar', {tiles: alterados});
 }
 function limparTerreno(){
+  tileData.clear();
+  redrawTerrain();
+  enviarMesa('terreno_limpar', {});
+}
+function receberTerrenoPintar(payload){
+  (payload.tiles||[]).forEach(([key,tipo])=>{
+    if(tipo==='vazio') tileData.delete(key);
+    else tileData.set(key, tipo);
+  });
+  redrawTerrain();
+}
+function receberTerrenoLimpar(){
   tileData.clear();
   redrawTerrain();
 }
 
 function applyMapTransform(){
-  document.getElementById('mapInner').style.transform =
+  const inner = document.getElementById('mapInner');
+  inner.style.transform =
     `translate(${mapState.x}px,${mapState.y}px) scale(${mapState.scale})`;
+  inner.style.setProperty('--counter-scale', (1/mapState.scale));
 }
-function carregarMapa(evt){
-  const file = evt.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e=>{
-    const img = document.getElementById('mapImg');
-    img.src = e.target.result;
-    img.style.display='block';
-    img.onload = ()=>{
-      document.getElementById('mapInner').style.width = img.naturalWidth+'px';
-      document.getElementById('mapInner').style.height = img.naturalHeight+'px';
-      sizeTerrainCanvas();
-      resetMapView();
-    };
-  };
-  reader.readAsDataURL(file);
-}
-function removerMapa(){
-  if(!confirm('Remover a imagem do mapa? Os tokens e o terreno pintado continuam no lugar.')) return;
-  const img = document.getElementById('mapImg');
-  img.src = '';
-  img.style.display = 'none';
-  document.getElementById('mapFile').value = '';
-  const inner = document.getElementById('mapInner');
-  inner.style.width = '2400px';
-  inner.style.height = '2400px';
-  sizeTerrainCanvas();
-  resetMapView();
-}
-
-/* ---------- Camadas de imagem (vários ficheiros empilhados no mapa) ---------- */
-let layerZCounter = 10;
-
-function carregarCamadaImagem(evt){
-  const file = evt.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => criarCamadaImagem(e.target.result);
-  reader.readAsDataURL(file);
-  evt.target.value = '';
-}
-
-function criarCamadaImagem(dataUrl, opts={}){
-  const inner = document.getElementById('mapInner');
-  const div = document.createElement('div');
-  div.className = 'map-layer';
-  div.style.left = (opts.left !== undefined ? opts.left : '150px');
-  div.style.top = (opts.top !== undefined ? opts.top : '150px');
-  div.style.width = (opts.width !== undefined ? opts.width : '300px');
-  div.style.height = (opts.height !== undefined ? opts.height : '300px');
-  const z = opts.zIndex ? parseInt(opts.zIndex) : (++layerZCounter);
-  div.style.zIndex = String(z);
-  layerZCounter = Math.max(layerZCounter, z);
-  div.innerHTML = `<img src="${dataUrl}"><span class="rm" onclick="event.stopPropagation();this.parentElement.remove()">×</span>`;
-
-  const probe = new Image();
-  probe.onload = ()=>{
-    const aspect = probe.naturalWidth / probe.naturalHeight;
-    div.dataset.aspect = aspect;
-    if(opts.height === undefined){
-      const w = parseFloat(div.style.width);
-      div.style.height = (w/aspect)+'px';
-    }
-  };
-  probe.src = dataUrl;
-
-  const handle = document.createElement('div');
-  handle.className = 'resize-handle';
-  div.appendChild(handle);
-  makeLayerInteractive(div, handle);
-  inner.appendChild(div);
-  return div;
-}
-
-function makeLayerInteractive(div, handle){
-  let dragging=false, sx=0, sy=0, ox=0, oy=0;
-  div.addEventListener('mousedown', e=>{
-    if(e.target.classList.contains('rm') || e.target.classList.contains('resize-handle')) return;
-    e.stopPropagation();
-    div.style.zIndex = String(++layerZCounter);
-    dragging = true;
-    sx = e.clientX; sy = e.clientY;
-    ox = parseFloat(div.style.left); oy = parseFloat(div.style.top);
-    const move = ev=>{
-      if(!dragging) return;
-      const dx = (ev.clientX-sx)/mapState.scale;
-      const dy = (ev.clientY-sy)/mapState.scale;
-      div.style.left = (ox+dx)+'px';
-      div.style.top = (oy+dy)+'px';
-    };
-    const up = ()=>{
-      dragging=false;
-      document.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseup', up);
-    };
-    document.addEventListener('mousemove', move);
-    document.addEventListener('mouseup', up);
-  });
-
-  let resizing=false, rsx=0, startW=300;
-  handle.addEventListener('mousedown', e=>{
-    e.stopPropagation();
-    resizing = true;
-    rsx = e.clientX;
-    startW = div.offsetWidth;
-    const aspect = parseFloat(div.dataset.aspect) || (div.offsetWidth/div.offsetHeight) || 1;
-    const move = ev=>{
-      if(!resizing) return;
-      const delta = (ev.clientX-rsx)/mapState.scale;
-      const novaLargura = Math.max(30, Math.min(1800, startW+delta));
-      div.style.width = novaLargura+'px';
-      div.style.height = (novaLargura/aspect)+'px';
-    };
-    const up = ()=>{
-      resizing=false;
-      document.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseup', up);
-    };
-    document.addEventListener('mousemove', move);
-    document.addEventListener('mouseup', up);
-  });
-}
-
-function limparCamadas(){
-  document.querySelectorAll('#mapInner .map-layer').forEach(el=>el.remove());
-}
-
 function zoomMap(factor){
   mapState.scale = Math.max(0.2, Math.min(4, mapState.scale*factor));
   applyMapTransform();
@@ -2024,44 +1882,55 @@ function resetMapView(){
   applyMapTransform();
 }
 function toggleGrid(){
-  document.getElementById('gridOverlay').style.display =
-    document.getElementById('gridToggle').checked ? 'block':'none';
+  const ativo = document.getElementById('gridToggle').checked;
+  document.getElementById('gridOverlay').style.display = ativo ? 'block':'none';
+  enviarMesa('grid_toggle', {ativo});
+}
+function receberGridToggle(payload){
+  document.getElementById('gridToggle').checked = !!payload.ativo;
+  document.getElementById('gridOverlay').style.display = payload.ativo ? 'block':'none';
 }
 function adicionarToken(){
   tokenSeq++;
   const nome = document.getElementById('tokenNome').value.trim() || ('T'+tokenSeq);
   const cor = document.getElementById('tokenCor').value;
-  const tamanho = 44;
-  const inner = document.getElementById('mapInner');
-  const t = document.createElement('div');
-  t.className='token';
-  t.style.background = cor;
-  t.style.left = (200+tokenSeq*20)+'px';
-  t.style.top = (200+tokenSeq*20)+'px';
-  t.style.width = tamanho+'px';
-  t.style.height = tamanho+'px';
-  t.style.fontSize = Math.max(9, tamanho*0.28)+'px';
-  t.style.zIndex = '500';
-  t.title = nome;
-  t.textContent = nome.slice(0,4);
-  t.innerHTML += '<span class="rm" onclick="event.stopPropagation();this.parentElement.remove()">×</span>';
-  makeTokenDraggable(t);
-  inner.appendChild(t);
+  const left = (200+tokenSeq*20)+'px';
+  const top = (200+tokenSeq*20)+'px';
+  const tid = gerarId();
+  criarTokenNoMapa({tid, left, top, nome, cor});
+  enviarMesa('token_add', {tid, left, top, nome, cor});
 }
 function limparTokens(){
+  document.querySelectorAll('.token').forEach(t=>t.remove());
+  enviarMesa('tokens_clear', {});
+}
+function receberTokenAdd(payload){
+  if(document.querySelector(`.token[data-tid="${payload.tid}"]`)) return;
+  criarTokenNoMapa(payload);
+}
+function receberTokenMove(payload){
+  const t = document.querySelector(`.token[data-tid="${payload.tid}"]`);
+  if(!t || t.dataset.arrastando==='1') return;
+  t.style.left = payload.left;
+  t.style.top = payload.top;
+}
+function receberTokenRemove(payload){
+  const t = document.querySelector(`.token[data-tid="${payload.tid}"]`);
+  if(t) t.remove();
+}
+function receberTokensClear(){
   document.querySelectorAll('.token').forEach(t=>t.remove());
 }
 
 /* ---------- Cenários (mapas pré-montados) ---------- */
-function criarTokenNoMapa({left, top, nome, cor, foto, tamanho}){
+function criarTokenNoMapa({tid, left, top, nome, cor, foto, size}){
   const inner = document.getElementById('mapInner');
   const t = document.createElement('div');
   t.className='token';
-  const tam = tamanho || 44;
+  t.dataset.tid = tid || gerarId();
+  const tam = size || 44;
   t.style.width = tam+'px';
   t.style.height = tam+'px';
-  t.style.fontSize = Math.max(9, tam*0.28)+'px';
-  t.style.zIndex = '500';
   if(foto){
     t.style.backgroundImage = `url(${foto})`;
     t.style.backgroundSize = 'cover';
@@ -2074,74 +1943,68 @@ function criarTokenNoMapa({left, top, nome, cor, foto, tamanho}){
   t.style.left = left || '200px';
   t.style.top = top || '200px';
   t.title = nome || '';
-  t.innerHTML += '<span class="rm" onclick="event.stopPropagation();this.parentElement.remove()">×</span>';
+  t.innerHTML += '<span class="rm" onclick="event.stopPropagation();removerToken(this.parentElement)" title="Remover">×</span>';
+  t.innerHTML += '<span class="rz" title="Arraste para redimensionar">⤡</span>';
   makeTokenDraggable(t);
+  makeTokenResizable(t);
   inner.appendChild(t);
+}
+function removerToken(t){
+  const tid = t.dataset.tid;
+  t.remove();
+  if(tid) enviarMesa('token_remove', {tid});
 }
 
 function serializarCenario(){
-  const mapImgEl = document.getElementById('mapImg');
   const inner = document.getElementById('mapInner');
   const tokens = Array.from(document.querySelectorAll('#mapInner .token')).map(t=>{
     const m = /url\(["']?(.*?)["']?\)/.exec(t.style.backgroundImage || '');
     return {
+      tid: t.dataset.tid || gerarId(),
       left: t.style.left,
       top: t.style.top,
+      size: parseInt(t.style.width) || 44,
       nome: t.title || '',
       cor: m ? '' : (t.style.background || ''),
-      foto: m ? m[1] : null,
-      tamanho: t.offsetWidth || 44
+      foto: m ? m[1] : null
     };
   });
-  const camadas = Array.from(document.querySelectorAll('#mapInner .map-layer')).map(div=>{
-    const img = div.querySelector('img');
+  const imagens = Array.from(document.querySelectorAll('#mapInner .img-obj')).map(t=>{
+    const m = /url\(["']?(.*?)["']?\)/.exec(t.style.backgroundImage || '');
     return {
-      src: img ? img.src : null,
-      left: div.style.left,
-      top: div.style.top,
-      width: div.style.width,
-      height: div.style.height,
-      zIndex: div.style.zIndex
+      tid: t.dataset.tid || gerarId(),
+      left: t.style.left,
+      top: t.style.top,
+      width: parseInt(t.style.width) || 180,
+      height: parseInt(t.style.height) || 180,
+      foto: m ? m[1] : null
     };
   });
   return {
-    mapa: (mapImgEl.style.display!=='none' && mapImgEl.src) ? mapImgEl.src : null,
     mapWidth: parseInt(inner.style.width)||2400,
     mapHeight: parseInt(inner.style.height)||2400,
     grade: document.getElementById('gridToggle').checked,
     tiles: Array.from(tileData.entries()),
     tokens: tokens,
-    camadas: camadas
+    imagens: imagens
   };
 }
 
 function aplicarCenario(dados){
   document.querySelectorAll('#mapInner .token').forEach(t=>t.remove());
-  document.querySelectorAll('#mapInner .map-layer').forEach(d=>d.remove());
+  document.querySelectorAll('#mapInner .img-obj').forEach(t=>t.remove());
   tileData.clear();
-  const mapImgEl = document.getElementById('mapImg');
   const inner = document.getElementById('mapInner');
-  if(dados.mapa){
-    mapImgEl.src = dados.mapa;
-    mapImgEl.style.display = 'block';
-  } else {
-    mapImgEl.src = '';
-    mapImgEl.style.display = 'none';
-  }
-  inner.style.width = (dados.mapWidth||2400)+'px';
-  inner.style.height = (dados.mapHeight||2400)+'px';
+  const w = dados.mapWidth||2400, h = dados.mapHeight||2400;
+  inner.style.width = w+'px';
+  inner.style.height = h+'px';
   sizeTerrainCanvas();
   (dados.tiles||[]).forEach(([key,tipo])=>tileData.set(key,tipo));
   redrawTerrain();
   document.getElementById('gridToggle').checked = !!dados.grade;
   toggleGrid();
-  (dados.camadas||[]).forEach(c=>{
-    if(!c.src) return;
-    criarCamadaImagem(c.src, {
-      left: c.left, top: c.top, width: c.width, height: c.height, zIndex: c.zIndex
-    });
-  });
   (dados.tokens||[]).forEach(tk=>criarTokenNoMapa(tk));
+  (dados.imagens||[]).forEach(im=>criarImagemNoMapa(im));
   resetMapView();
 }
 
@@ -2185,6 +2048,13 @@ async function carregarCenarioSelecionado(){
   const { data, error } = await supabaseClient.from('cenarios').select('dados').eq('id', id).maybeSingle();
   if(error || !data){ alert('Erro ao carregar cenário.'); return; }
   aplicarCenario(data.dados);
+  enviarMesa('cenario_aplicado', {id});
+}
+async function receberCenarioAplicado(payload){
+  if(!supabaseClient || !payload || !payload.id) return;
+  const { data, error } = await supabaseClient.from('cenarios').select('dados').eq('id', payload.id).maybeSingle();
+  if(error || !data) return;
+  aplicarCenario(data.dados);
 }
 
 async function excluirCenarioSelecionado(){
@@ -2197,12 +2067,15 @@ async function excluirCenarioSelecionado(){
   carregarCenariosDaMesa();
 }
 
-function makeTokenDraggable(t){
-  let dragging=false, sx=0, sy=0, ox=0, oy=0;
+function makeTokenDraggable(t, eventoMove){
+  eventoMove = eventoMove || 'token_move';
+  let dragging=false, sx=0, sy=0, ox=0, oy=0, lastSend=0;
   t.addEventListener('mousedown', e=>{
-    if(e.target.classList.contains('rm') || e.target.classList.contains('resize-handle')) return;
+    if(e.target.classList.contains('rm') || e.target.classList.contains('rz')) return;
+    e.preventDefault();
     e.stopPropagation();
     dragging=true;
+    t.dataset.arrastando = '1';
     sx=e.clientX; sy=e.clientY;
     ox=parseFloat(t.style.left); oy=parseFloat(t.style.top);
     const move = ev=>{
@@ -2211,46 +2084,263 @@ function makeTokenDraggable(t){
       const dy=(ev.clientY-sy)/mapState.scale;
       t.style.left=(ox+dx)+'px';
       t.style.top=(oy+dy)+'px';
+      const agora = Date.now();
+      if(agora-lastSend > 80){
+        lastSend = agora;
+        enviarMesa(eventoMove, {tid: t.dataset.tid, left: t.style.left, top: t.style.top});
+      }
     };
     const up = ()=>{
       dragging=false;
+      enviarMesa(eventoMove, {tid: t.dataset.tid, left: t.style.left, top: t.style.top});
       document.removeEventListener('mousemove',move);
       document.removeEventListener('mouseup',up);
+      // pequena folga antes de voltar a aceitar atualizações remotas desse objeto,
+      // pra não brigar com o eco da própria jogada chegando atrasado
+      setTimeout(()=>{ delete t.dataset.arrastando; }, 250);
     };
     document.addEventListener('mousemove',move);
     document.addEventListener('mouseup',up);
   });
-
-  const handle = document.createElement('div');
-  handle.className = 'resize-handle';
-  t.appendChild(handle);
-  let resizing=false, rsx=0, rStartSize=44;
-  handle.addEventListener('mousedown', e=>{
+  // toque (celular/tablet)
+  t.addEventListener('touchstart', e=>{
+    if(e.target.classList.contains('rm') || e.target.classList.contains('rz')) return;
     e.stopPropagation();
-    resizing = true;
-    rsx = e.clientX;
-    rStartSize = t.offsetWidth;
+    const touch = e.touches[0];
+    dragging=true;
+    t.dataset.arrastando = '1';
+    sx=touch.clientX; sy=touch.clientY;
+    ox=parseFloat(t.style.left); oy=parseFloat(t.style.top);
     const move = ev=>{
-      if(!resizing) return;
-      const delta = (ev.clientX-rsx)/mapState.scale;
-      const novoTamanho = Math.max(18, Math.min(220, rStartSize + delta));
-      t.style.width = novoTamanho+'px';
-      t.style.height = novoTamanho+'px';
-      t.style.fontSize = Math.max(9, novoTamanho*0.28)+'px';
+      if(!dragging) return;
+      const tt = ev.touches[0];
+      const dx=(tt.clientX-sx)/mapState.scale;
+      const dy=(tt.clientY-sy)/mapState.scale;
+      t.style.left=(ox+dx)+'px';
+      t.style.top=(oy+dy)+'px';
+      const agora = Date.now();
+      if(agora-lastSend > 80){
+        lastSend = agora;
+        enviarMesa(eventoMove, {tid: t.dataset.tid, left: t.style.left, top: t.style.top});
+      }
+      ev.preventDefault();
     };
     const up = ()=>{
-      resizing = false;
-      document.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseup', up);
+      dragging=false;
+      enviarMesa(eventoMove, {tid: t.dataset.tid, left: t.style.left, top: t.style.top});
+      document.removeEventListener('touchmove',move);
+      document.removeEventListener('touchend',up);
+      setTimeout(()=>{ delete t.dataset.arrastando; }, 250);
     };
-    document.addEventListener('mousemove', move);
-    document.addEventListener('mouseup', up);
+    document.addEventListener('touchmove',move,{passive:false});
+    document.addEventListener('touchend',up);
+  }, {passive:true});
+}
+
+function makeTokenResizable(t){
+  const TAM_MIN = 24, TAM_MAX = 180;
+  let lastSend = 0;
+  const aplicarTamanho = (novo, enviar)=>{
+    novo = Math.max(TAM_MIN, Math.min(TAM_MAX, Math.round(novo)));
+    t.style.width = novo+'px';
+    t.style.height = novo+'px';
+    if(enviar){
+      const agora = Date.now();
+      if(agora-lastSend > 80){
+        lastSend = agora;
+        enviarMesa('token_resize', {tid: t.dataset.tid, size: novo});
+      }
+    }
+    return novo;
+  };
+
+  // Arrastar a alça no canto do token
+  const rz = t.querySelector('.rz');
+  if(rz){
+    rz.addEventListener('mousedown', e=>{
+      e.stopPropagation(); e.preventDefault();
+      t.dataset.redimensionando = '1';
+      const startSize = parseFloat(t.style.width) || 44;
+      const sx=e.clientX, sy=e.clientY;
+      const move = ev=>{
+        const delta = ((ev.clientX-sx)+(ev.clientY-sy))/2/mapState.scale;
+        aplicarTamanho(startSize+delta, true);
+      };
+      const up = ()=>{
+        aplicarTamanho(parseFloat(t.style.width)||44, true);
+        document.removeEventListener('mousemove',move);
+        document.removeEventListener('mouseup',up);
+        setTimeout(()=>{ delete t.dataset.redimensionando; }, 250);
+      };
+      document.addEventListener('mousemove',move);
+      document.addEventListener('mouseup',up);
+    });
+    rz.addEventListener('touchstart', e=>{
+      e.stopPropagation();
+      t.dataset.redimensionando = '1';
+      const touch = e.touches[0];
+      const startSize = parseFloat(t.style.width) || 44;
+      const sx=touch.clientX, sy=touch.clientY;
+      const move = ev=>{
+        const tt = ev.touches[0];
+        const delta = ((tt.clientX-sx)+(tt.clientY-sy))/2/mapState.scale;
+        aplicarTamanho(startSize+delta, true);
+        ev.preventDefault();
+      };
+      const up = ()=>{
+        aplicarTamanho(parseFloat(t.style.width)||44, true);
+        document.removeEventListener('touchmove',move);
+        document.removeEventListener('touchend',up);
+        setTimeout(()=>{ delete t.dataset.redimensionando; }, 250);
+      };
+      document.addEventListener('touchmove',move,{passive:false});
+      document.addEventListener('touchend',up);
+    }, {passive:true});
+  }
+
+  // Roda do mouse sobre o token: ajuste rápido de tamanho (sem afetar o zoom do mapa)
+  t.addEventListener('wheel', e=>{
+    e.preventDefault(); e.stopPropagation();
+    const atual = parseFloat(t.style.width) || 44;
+    aplicarTamanho(atual + (e.deltaY<0 ? 4 : -4), true);
+  }, {passive:false});
+}
+
+function receberTokenResize(payload){
+  const t = document.querySelector(`.token[data-tid="${payload.tid}"]`);
+  if(!t || t.dataset.redimensionando==='1') return;
+  t.style.width = payload.size+'px';
+  t.style.height = payload.size+'px';
+}
+
+/* ---------- Imagens livres no mapa (qualquer imagem, tamanho e proporção livres) ---------- */
+function adicionarImagemLivre(evt){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const tid = gerarId();
+    const payload = { tid, left:'260px', top:'260px', width:220, height:220, foto:e.target.result };
+    criarImagemNoMapa(payload);
+    enviarMesa('imagem_add', payload);
+  };
+  reader.readAsDataURL(file);
+  evt.target.value = '';
+}
+function criarImagemNoMapa({tid, left, top, width, height, foto}){
+  const inner = document.getElementById('mapInner');
+  const t = document.createElement('div');
+  t.className = 'img-obj';
+  t.dataset.tid = tid || gerarId();
+  t.style.left = left || '260px';
+  t.style.top = top || '260px';
+  t.style.width = (width||220)+'px';
+  t.style.height = (height||220)+'px';
+  if(foto) t.style.backgroundImage = `url(${foto})`;
+  t.innerHTML = '<span class="rm" onclick="event.stopPropagation();removerImagem(this.parentElement)" title="Remover">×</span>' +
+                '<span class="rz" title="Arraste para redimensionar livremente">⤡</span>';
+  makeTokenDraggable(t, 'imagem_move');
+  makeImagemResizable(t);
+  inner.appendChild(t);
+}
+function makeImagemResizable(t){
+  const TAM_MIN = 30, TAM_MAX = 3000;
+  let lastSend = 0;
+  const aplicar = (w, h, enviar)=>{
+    w = Math.max(TAM_MIN, Math.min(TAM_MAX, Math.round(w)));
+    h = Math.max(TAM_MIN, Math.min(TAM_MAX, Math.round(h)));
+    t.style.width = w+'px';
+    t.style.height = h+'px';
+    if(enviar){
+      const agora = Date.now();
+      if(agora-lastSend > 80){
+        lastSend = agora;
+        enviarMesa('imagem_resize', {tid: t.dataset.tid, width: w, height: h});
+      }
+    }
+  };
+  const rz = t.querySelector('.rz');
+  if(!rz) return;
+  rz.addEventListener('mousedown', e=>{
+    e.stopPropagation(); e.preventDefault();
+    t.dataset.redimensionando = '1';
+    const startW = parseFloat(t.style.width) || 220;
+    const startH = parseFloat(t.style.height) || 220;
+    const sx=e.clientX, sy=e.clientY;
+    const move = ev=>{
+      const dw = (ev.clientX-sx)/mapState.scale;
+      const dh = (ev.clientY-sy)/mapState.scale;
+      aplicar(startW+dw, startH+dh, true);
+    };
+    const up = ()=>{
+      aplicar(parseFloat(t.style.width)||220, parseFloat(t.style.height)||220, true);
+      document.removeEventListener('mousemove',move);
+      document.removeEventListener('mouseup',up);
+      setTimeout(()=>{ delete t.dataset.redimensionando; }, 250);
+    };
+    document.addEventListener('mousemove',move);
+    document.addEventListener('mouseup',up);
   });
+  rz.addEventListener('touchstart', e=>{
+    e.stopPropagation();
+    t.dataset.redimensionando = '1';
+    const touch = e.touches[0];
+    const startW = parseFloat(t.style.width) || 220;
+    const startH = parseFloat(t.style.height) || 220;
+    const sx=touch.clientX, sy=touch.clientY;
+    const move = ev=>{
+      const tt = ev.touches[0];
+      const dw = (tt.clientX-sx)/mapState.scale;
+      const dh = (tt.clientY-sy)/mapState.scale;
+      aplicar(startW+dw, startH+dh, true);
+      ev.preventDefault();
+    };
+    const up = ()=>{
+      aplicar(parseFloat(t.style.width)||220, parseFloat(t.style.height)||220, true);
+      document.removeEventListener('touchmove',move);
+      document.removeEventListener('touchend',up);
+      setTimeout(()=>{ delete t.dataset.redimensionando; }, 250);
+    };
+    document.addEventListener('touchmove',move,{passive:false});
+    document.addEventListener('touchend',up);
+  }, {passive:true});
+}
+function removerImagem(t){
+  const tid = t.dataset.tid;
+  t.remove();
+  if(tid) enviarMesa('imagem_remove', {tid});
+}
+function limparImagens(){
+  document.querySelectorAll('.img-obj').forEach(t=>t.remove());
+  enviarMesa('imagens_clear', {});
+}
+function receberImagemAdd(payload){
+  if(document.querySelector(`.img-obj[data-tid="${payload.tid}"]`)) return;
+  criarImagemNoMapa(payload);
+}
+function receberImagemMove(payload){
+  const t = document.querySelector(`.img-obj[data-tid="${payload.tid}"]`);
+  if(!t || t.dataset.arrastando==='1') return;
+  t.style.left = payload.left;
+  t.style.top = payload.top;
+}
+function receberImagemResize(payload){
+  const t = document.querySelector(`.img-obj[data-tid="${payload.tid}"]`);
+  if(!t || t.dataset.redimensionando==='1') return;
+  t.style.width = payload.width+'px';
+  t.style.height = payload.height+'px';
+}
+function receberImagemRemove(payload){
+  const t = document.querySelector(`.img-obj[data-tid="${payload.tid}"]`);
+  if(t) t.remove();
+}
+function receberImagensClear(){
+  document.querySelectorAll('.img-obj').forEach(t=>t.remove());
 }
 function initMapPan(){
   const vp = document.getElementById('mapViewport');
   vp.addEventListener('mousedown', e=>{
-    if(e.target.closest('.token') || e.target.closest('.map-layer')) return;
+    if(e.target.closest('.token')) return;
     if(paintMode){
       isPainting = true;
       pintarNaPosicao(e.clientX, e.clientY);
@@ -2287,7 +2377,6 @@ initMapPan();
 sizeTerrainCanvas();
 atualizarTodasRaridades();
 aplicarFotoNaTela();
-initCropStage();
 conectarSupabase();
 </script>
 </body>
